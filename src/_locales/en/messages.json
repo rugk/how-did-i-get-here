@@ -1,0 +1,15 @@
+{
+  // manifest.json
+  "extensionName": {
+    "message": "How did I get here? (Tab History)",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "When you are lost in tabs, it let's you recover the path to the current tab.",
+    "description": "Description of the extension."
+  },
+  "browserActionButtonTitle": {
+    "message": "How did I get here?",
+    "description": "The title for the button, which opens the popup."
+  }
+}

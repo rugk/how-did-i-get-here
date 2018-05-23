@@ -1,0 +1,3 @@
+Shows you the history of your current tab. Which tab did you use to open this tab? Don't remember? This is your add-on…
+
+**Attention:** Early prototype version!!

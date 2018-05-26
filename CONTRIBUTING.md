@@ -39,7 +39,7 @@ Note that the `amoScreenshots.csv` file refers to the screenshot descriptions yo
 HTML files are easy to internationalize.
 You just have to add the custom `data-i18n` and add the [`__MSG_translationName__`](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization#Predefined_messages) syntax for selecting the value. If the value is empty, the content of the tag will not be translated.
 
-If the `data-i18n` value is present, it will additionally try to translate the hardcoded attributes in `localizedAttributes`, and check whether `data-i18n-attribut` (where `attribut` is an attribut like `alt`) exists and if so, replace the original attribut in the same way. Basically, just have a look at how it is done in the existing parts.
+If the `data-i18n` value is present, it will additionally try to translate the hardcoded attributes in `localizedAttributes`, and check whether `data-i18n-attribute` (where `attribute` is an attribute like `alt`) exists and if so, replace the original attribute in the same way. Basically, just have a look at how it is done in the existing parts.
 
 You should always hardcode an English fallback string in the HTML file, so it can use this, if all JS localization fails.
 
@@ -70,7 +70,7 @@ Apart from that, there are some simple rules.
 * Especially, as we use a [CSP](src/manifest.json), please do _not_:
    * use inline JavaScript
    * use eval, or other insecure features
-   * modify the [CSP](src/manifest.json#L33) :wink:
+   * modify the CSP
 * The code uses a kind of "Revealing Module Pattern", where the variable `me` contains all public methods (and properties).
 * Avoid `this`, it mostly causes confusion. The pattern used here, usually does not need `this`.
 * Use early return instead of nested if blocks to keep the code readable.
@@ -78,7 +78,7 @@ Apart from that, there are some simple rules.
 * If you write real constants (i.e. `const` variables not written in functions, if their scope e.g. is a "module" or whole project, and which do represent static _literals_, e.g. simple variable types, such as integers, strings, but not selected HTML elements), do write them in UPPERCASE (as "real" constants are usually written in other languages), otherwise write them as usual variables in camelCase.
 * Objects, which should never be modified, should be frozen with `Object.freeze`, so they cannot be modified.
 * Do _not_ use magic numbers. Use (global/module-scoped) constants instead.
-* Do log important things you do in your code. Use the `Logger` for that. In production code no `console.log()` or similar should appear.
+* Throw errors when you have them. Avoid looging things with `console.log()`.
 * Avoid modifying the DOM in JS. The whole structure of the add-on is so simple it should be represented in the HTML file. Remember that HTML files should represent the (whole) structure of the "website".
 * Avoid naming variables by their variable type only, e.g. `element`. Instead try to use the same variable name for an element whenever you refer to it in the source code. E.g. name a message box `elMessage`, so one can search for it in the whole code base to find out, where it is touched.
 * You should start the variable names of HTML elements with `el` as they are not obvious to differentiate from other variable names. Otherwise, do not prepend the variable type to the variable name.

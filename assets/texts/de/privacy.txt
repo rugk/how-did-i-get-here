@@ -1,3 +1,5 @@
-Dieses Add-on wird (und kann) niemals Informationen zum Add-on-Autor oder einer Drittpartei senden. Es ist technisch so eingeschränkt, dass es keine Möglichkeit zum Zugriffs auf das Internet hat.
+Dieses Add-on wird niemals personenbezogene Informationen zum Add-on-Autor oder einer Drittpartei senden.
+
+Um zu funktionieren, fragt es die Favicons (die Icons neben dem Tab) der Webseiten ab, die in der Chronik des Tabs dargestellt werden.
 
 Eine Erklärung aller Berechtigungen, die dieses Add-on erfragt kann auf https://github.com/rugk/how-did-i-get-here/blob/master/assets/texts/de/permissions.md gefunden werden.

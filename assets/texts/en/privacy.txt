@@ -1,3 +1,5 @@
-This add-on will never (and cannot) send any information to the add-on author or any third-party. It is technically restricted, so that it has no ability to connect to the internet.
+This add-on will never send any personal information to the add-on author or any third-party.
+
+To be able to work, it requests the favicons (the icons at your tab) from the websites, which are displayed in the tab history.
 
 An explanation of all permissions, this add-on requests, can be found at https://github.com/rugk/how-did-i-get-here/blob/master/assets/texts/en/permissions.md.

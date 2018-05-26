@@ -1,7 +1,63 @@
-body {
-  padding: 4px;
+/* unset styles, we do not want */
+h1, h2 {
+  margin: unset;
+
+  word-break: keep-all;
+}
+ul {
+  margin: 0px;
+  padding: 0px;
+}
+li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0px;
 }
 
-#tabhistory p {
+.invisible {
+  display: none;
+}
+
+/* commkon styling for tab list and header */
+header, .listContent {
+  display: flex;
+  align-items: center;
+}
+.favicon {
+  margin-right: 4px;
+}
+
+/* custom styling for header */
+header {
+  padding: 8px;
+
+  border: 2px solid;
+  border-image: repeating-linear-gradient(to left, rgb(189, 235, 8), rgb(207, 235, 8) 10px, rgb(189, 235, 8)) 1;
+  border-image-width: 0 0 2px 0;
+}
+h1 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* actual body/content */
+main {
+  padding: 8px;
+}
+
+/* tab list style */
+#tabhistory li {
   margin-left: 8px;
+  margin-top: 4px;
+}
+
+h2 {
+  /* unset usual style */
+  font-weight: normal;
+
+  font-size: 1em;
+}
+
+.templates {
+  display: none;
 }

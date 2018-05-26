@@ -42,9 +42,11 @@ const UserInterface = (function () {
 
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");
+    const elBackButton = document.getElementById("backButton");
 
     let historyCount;
     let elLastHistory;
+    let tabSwitches = [];
 
     /**
      * Recursively goes through historic elements to add them to UI.
@@ -74,6 +76,48 @@ const UserInterface = (function () {
     }
 
     /**
+     * Go back to last item.
+     *
+     * You only have to pass one parameter of the two.
+     *
+     * @name   UserInterface.goBack
+     * @function
+     * @private
+     * @param {integer} tabId
+     * @param {HtmlElement} elTab
+     * @returns {Promise}
+     */
+    function switchToTab(tabId, elTab) {
+        if (tabId != null && tabId !== undefined) {
+            elTab = elTab || document.querySelector(`[data-tab-id='${tabId}']`);
+        } else if (elTab != null && elTab !== undefined) {
+            tabId = tabId || Number(elTab.dataset.tabId);
+        } else {
+            throw new Error("at least one parameter must be specified");
+        }
+
+        if (elTab) {
+            const windowId = Number(elTab.dataset.windowId);
+
+            browser.windows.update(
+                windowId, {
+                    focused: true
+                }
+            );
+        }
+
+        return browser.tabs.update(
+            tabId,
+            {
+                active: true
+            }
+        ).then(() => {
+            // "reload" whole UI
+            Controller.run();
+        });
+    }
+
+    /**
      * When one item of the tab list is clicked.
      *
      * @name   UserInterface.tabClick
@@ -84,23 +128,12 @@ const UserInterface = (function () {
      */
     function tabClick(event) {
         const elTab = event.currentTarget;
-        const tabId = Number(elTab.dataset.tabId);
-        const windowId = Number(elTab.dataset.windowId);
 
-        browser.windows.update(
-            windowId, {
-                focused: true
+        switchToTab(null, elTab).then(() => {
+            // if it is the initial tab, show back button
+            if (tabSwitches.length <= 1) {
+                elBackButton.classList.remove("invisible");
             }
-        );
-
-        browser.tabs.update(
-            tabId,
-            {
-                active: true
-            }
-        ).then(() => {
-            // "reload" whole UI
-            Controller.run();
         });
 
         // only possible in Chrome currently
@@ -108,6 +141,27 @@ const UserInterface = (function () {
         // browser.tabs.highlight({
         //     tabs: tabId
         // });
+    }
+
+    /**
+     * Go back to last tab.
+     *
+     * @name   UserInterface.goBack
+     * @function
+     * @private
+     * @returns {void}
+     */
+    async function goBack() {
+        // remove current tab from stack
+        tabSwitches.pop();
+
+        // navigate to tab before (also popped, as it adds itself later anyway back)
+        await switchToTab(tabSwitches.pop());
+
+        // if it is the initial tab, hide back button, because we don't need it anymore
+        if (tabSwitches.length <= 2) {
+            elBackButton.classList.add("invisible");
+        }
     }
 
     /**
@@ -173,6 +227,9 @@ const UserInterface = (function () {
         const currentTab = await TabHistory.getCurrentTab();
         setTabProperties(currentTab, elCurrentTab);
 
+        // push tab to history "stack", so we can navigate back to it later
+        tabSwitches.push(currentTab.id);
+
         TabHistory.getParentOfTab(currentTab).then(addHistoryElement).catch(() => {
             // at the end a failure is triggered, because it cannot find more parents
             if (historyCount === 0) {
@@ -181,6 +238,17 @@ const UserInterface = (function () {
                 elNoElementFound.classList.remove("invisible");
             }
         });
+    };
+
+    /**
+     * Inits module.
+     *
+     * @name   UserInterface.init
+     * @function
+     * @returns {void}
+     */
+    me.init = function() {
+        elBackButton.addEventListener("click", goBack);
     };
 
     return me;
@@ -207,4 +275,5 @@ const Controller = (function () {
 })();
 
 // init modules
+UserInterface.init();
 Controller.run();

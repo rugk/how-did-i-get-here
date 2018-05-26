@@ -1,3 +1,7 @@
+:root {
+  --hover-grey: rgba(79, 80, 89, 0.15);
+}
+
 /* unset styles, we do not want */
 h1, h2 {
   margin: unset;
@@ -28,6 +32,19 @@ header, .listContent {
 }
 
 /* custom styling for header */
+.actionButton {
+  margin-right: 8px;
+  padding: 4px;
+
+  border-radius: 4px;
+  cursor: pointer;
+
+  box-sizing: content-box;
+}
+.actionButton:hover {
+  background-color: var(--hover-grey);
+}
+
 header {
   padding: 8px;
 
@@ -58,7 +75,7 @@ main {
   cursor: pointer;
 }
 .tabelement:hover {
-  background-color: rgba(79, 80, 89, 0.15);
+  background-color: var(--hover-grey);
   text-decoration: underline;
 
   color: rgb(33, 41, 0);

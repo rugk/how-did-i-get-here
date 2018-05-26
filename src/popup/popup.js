@@ -43,8 +43,8 @@ const UserInterface = (function () {
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");
 
-    let historyCount = 0;
-    let elLastHistory = document.getElementById("tabhistory");
+    let historyCount;
+    let elLastHistory;
 
     /**
      * Recursively goes through historic elements to add them to UI.
@@ -59,7 +59,10 @@ const UserInterface = (function () {
         const elTab = elTabTemplate.cloneNode(true);
         elTab.removeAttribute("id");
 
-        addTabToUi(tab, elTab);
+        // attach event listener
+        elTab.addEventListener("click", tabClick);
+
+        setTabProperties(tab, elTab);
 
         historyCount++;
 
@@ -71,17 +74,58 @@ const UserInterface = (function () {
     }
 
     /**
+     * When one item of the tab list is clicked.
+     *
+     * @name   UserInterface.tabClick
+     * @function
+     * @private
+     * @param {Event} event
+     * @returns {void}
+     */
+    function tabClick(event) {
+        const elTab = event.currentTarget;
+        const tabId = Number(elTab.dataset.tabId);
+        const windowId = Number(elTab.dataset.windowId);
+
+        browser.windows.update(
+            windowId, {
+                focused: true
+            }
+        );
+
+        browser.tabs.update(
+            tabId,
+            {
+                active: true
+            }
+        ).then(() => {
+            // "reload" whole UI
+            Controller.run();
+        });
+
+        // only possible in Chrome currently
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1464601
+        // browser.tabs.highlight({
+        //     tabs: tabId
+        // });
+    }
+
+    /**
      * Adds the data from the tab to the UI.
      *
-     * @name   UserInterface.addTabToUi
+     * @name   UserInterface.setTabProperties
      * @function
      * @private
      * @param {Object} tab
      * @param {HtmlElement} elGroup the place where to add the element
      * @returns {void}
      */
-    function addTabToUi(tab, elGroup) {
+    function setTabProperties(tab, elGroup) {
         elGroup.getElementsByClassName("title")[0].textContent = tab.title;
+
+        // save ID of tab
+        elGroup.dataset.tabId = tab.id;
+        elGroup.dataset.windowId = tab.windowId;
 
         const elFavicon = elGroup.querySelector("img");
         if (tab.favIconUrl) {
@@ -89,7 +133,34 @@ const UserInterface = (function () {
         } else {
             elFavicon.classList.add("invisible");
         }
+
+        if (tab.hidden) {
+            elGroup.classList.add("hiddenTab");
+        }
+        if (tab.pinned) {
+            elGroup.classList.add("pinnedTab");
+        }
+        if (tab.incognito) {
+            elGroup.classList.add("privateTab");
+        }
     }
+
+    /**
+     * Destroys the current UI.
+     *
+     * @name   UserInterface.destroyUi
+     * @function
+     * @returns {void}
+     */
+    me.destroyUi = function() {
+        historyCount = 0;
+        elLastHistory = document.getElementById("tabhistory");
+
+        const elementChild = elLastHistory.firstElementChild;
+        if (elLastHistory.firstElementChild) {
+            elementChild.remove();
+        }
+    };
 
     /**
      * Creates the basic UI structure.
@@ -100,7 +171,7 @@ const UserInterface = (function () {
      */
     me.buildUi = async function() {
         const currentTab = await TabHistory.getCurrentTab();
-        addTabToUi(currentTab, elCurrentTab);
+        setTabProperties(currentTab, elCurrentTab);
 
         TabHistory.getParentOfTab(currentTab).then(addHistoryElement).catch(() => {
             // at the end a failure is triggered, because it cannot find more parents
@@ -126,6 +197,9 @@ const Controller = (function () {
      * @returns {void}
      */
     me.run = function() {
+        // reset values
+        UserInterface.destroyUi();
+        // build UI
         UserInterface.buildUi();
     };
 

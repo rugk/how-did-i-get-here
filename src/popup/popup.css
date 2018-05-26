@@ -90,11 +90,6 @@ main {
   opacity: 0.7;
 }
 
-/* a tab not shown anymore */
-.tabelement.notHistory {
-  opacity: 0.5;
-}
-
 h2 {
   /* unset usual style */
   font-weight: normal;

@@ -273,9 +273,7 @@ const UserInterface = (function () {
 
             // hide outdated elements as not belonging to current tab
             for (const elOutdatedTab of document.querySelectorAll(".tabelement[data-outdated='1']")) {
-                delete elOutdatedTab.dataset.outdated;
-
-                elOutdatedTab.classList.add("notHistory");
+                elOutdatedTab.remove();
             }
         });
     };

@@ -47,7 +47,7 @@ const UserInterface = (function () {
 
     let historyCount;
     let elLastHistory;
-    let tabSwitches = [];
+    const tabSwitches = [];
 
     /**
      * Recursively goes through historic elements to add them to UI.
@@ -56,24 +56,41 @@ const UserInterface = (function () {
      * @function
      * @private
      * @param {Object} tab
-     * @returns {void}
+     * @returns {Promise}
      */
     function addHistoryElement(tab) {
-        const elTab = elTabTemplate.cloneNode(true);
-        elTab.removeAttribute("id");
+        // try to get existing element
+        let elTab = document.querySelector(`[data-tab-id='${tab.id}']`);
+        let newlyCreated = false;
 
-        // attach event listener
-        elTab.addEventListener("click", tabClick);
+        // create new element if needed
+        if (!elTab) {
+            newlyCreated = true;
+
+            elTab = elTabTemplate.cloneNode(true);
+            elTab.removeAttribute("id");
+
+            // attach event listener
+            elTab.addEventListener("click", tabClick);
+        }
 
         setTabProperties(tab, elTab);
 
         historyCount++;
 
-        // save child as one for next tab
-        elLastHistory = elLastHistory.appendChild(elTab);
+        if (newlyCreated) {
+            // save child as one for next tab
+            elLastHistory = elLastHistory.appendChild(elTab);
+        } else {
+            elLastHistory = elTab;
 
-        // get next parent
-        TabHistory.getParentOfTab(tab).then(addHistoryElement);
+            // mark tab as new, if needed
+            delete elTab.dataset.outdated;
+            elTab.classList.remove("notHistory");
+        }
+
+        // get next parent tab
+        return TabHistory.getParentOfTab(tab).then(addHistoryElement);
     }
 
     /**
@@ -201,22 +218,36 @@ const UserInterface = (function () {
     }
 
     /**
-     * Destroys the current UI.
+     * Resets most UI elements.
      *
-     * @name   UserInterface.destroyUi
+     * @name   UserInterface.resetUi
      * @function
      * @returns {void}
      */
-    me.destroyUi = function() {
+    me.resetUi = function() {
         historyCount = 0;
         elLastHistory = document.getElementById("tabhistory");
 
+        // mark old elements as outdated
+        for (const elTab of document.querySelectorAll("#tabhistory .tabelement")) {
+            elTab.dataset.outdated = 1;
+        }
+
+        elNoElementFound.classList.add("invisible");
+    };
+
+    /**
+     * Destroys the current tab list.
+     *
+     * @name   UserInterface.destroyTabList
+     * @function
+     * @returns {void}
+     */
+    me.destroyTabList = function() {
         const elementChild = elLastHistory.firstElementChild;
         if (elLastHistory.firstElementChild) {
             elementChild.remove();
         }
-
-        elNoElementFound.classList.add("invisible");
     };
 
     /**
@@ -238,6 +269,13 @@ const UserInterface = (function () {
             if (historyCount === 0) {
                 elNoElementFound.textContent = browser.i18n.getMessage("noHistoryFound");
                 elNoElementFound.classList.remove("invisible");
+            }
+
+            // hide outdated elements as not belonging to current tab
+            for (const elOutdatedTab of document.querySelectorAll(".tabelement[data-outdated='1']")) {
+                delete elOutdatedTab.dataset.outdated;
+
+                elOutdatedTab.classList.add("notHistory");
             }
         });
     };
@@ -268,7 +306,7 @@ const Controller = (function () {
      */
     me.run = function() {
         // reset values
-        UserInterface.destroyUi();
+        UserInterface.resetUi();
         // build UI
         UserInterface.buildUi();
     };

@@ -43,6 +43,7 @@ const UserInterface = (function () {
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");
     const elBackButton = document.getElementById("backButton");
+    const elNoElementFound = document.getElementById("noElementFound");
 
     let historyCount;
     let elLastHistory;
@@ -214,6 +215,8 @@ const UserInterface = (function () {
         if (elLastHistory.firstElementChild) {
             elementChild.remove();
         }
+
+        elNoElementFound.classList.add("invisible");
     };
 
     /**
@@ -233,7 +236,6 @@ const UserInterface = (function () {
         TabHistory.getParentOfTab(currentTab).then(addHistoryElement).catch(() => {
             // at the end a failure is triggered, because it cannot find more parents
             if (historyCount === 0) {
-                const elNoElementFound = document.getElementById("noElementFound");
                 elNoElementFound.textContent = browser.i18n.getMessage("noHistoryFound");
                 elNoElementFound.classList.remove("invisible");
             }

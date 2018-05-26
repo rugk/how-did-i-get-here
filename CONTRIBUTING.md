@@ -19,29 +19,11 @@ For example messages like "Learn more" may need special (and different) handling
 
 Please have look at [the "Writing for users" guide](https://design.firefox.com/photon/copy/writing-for-users.html) of the Firefox Photon Design for other rules you should adhere to.
 
-### Using HTML in translations
-
-If you need to use HTML in a translation, please prepend `!HTML!` in front of the text. It will only be parsed as HTML if you do this. Otherwise it will be displayed as text. A sentence could look like this:
-```json
-"boldSentence": {
-  "message": "!HTML! <b>This sentence is bold</b>"
-}
-```
-
 ### Translations of add-on description
 
 All texts shown on AMO (addons.mozilla.org) are maintained in [`assets/texts`](assets/texts). Again, you can use the English template there.
 The files have different formats, but all of them are easily translatable with any text editor.
 Note that the `amoScreenshots.csv` file refers to the screenshot descriptions you can see when you click on the screenshots of AMO. The first column there is the file name, which you can see in [`assets/screenshots`](assets/screenshots), and _must not_ be translated.
-
-### Internationalisation of HTML files
-
-HTML files are easy to internationalize.
-You just have to add the custom `data-i18n` and add the [`__MSG_translationName__`](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization#Predefined_messages) syntax for selecting the value. If the value is empty, the content of the tag will not be translated.
-
-If the `data-i18n` value is present, it will additionally try to translate the hardcoded attributes in `localizedAttributes`, and check whether `data-i18n-attribute` (where `attribute` is an attribute like `alt`) exists and if so, replace the original attribute in the same way. Basically, just have a look at how it is done in the existing parts.
-
-You should always hardcode an English fallback string in the HTML file, so it can use this, if all JS localization fails.
 
 ## Coding
 

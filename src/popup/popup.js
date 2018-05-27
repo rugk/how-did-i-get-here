@@ -89,6 +89,8 @@ const TabHistory = (function () {
 const UserInterface = (function () {
     const me = {};
 
+    const POPUP_RESIZE_ESTIMATED_TIME = 10; // ms
+
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");
     const elBackButton = document.getElementById("backButton");
@@ -343,13 +345,16 @@ const UserInterface = (function () {
             }
 
             // find very long tab titles and add fade effect to them
-            document.querySelectorAll(".title").forEach((elTitle) => {
-                if (elTitle.scrollWidth > elTitle.clientWidth) {
-                    elTitle.classList.add("overflowFade");
-                } else {
-                    elTitle.classList.remove("overflowFade");
-                }
-            });
+            // needs some timeout, because while the popup is resizing it could have false positives
+            setTimeout(() => {
+                document.querySelectorAll(".title").forEach((elTitle) => {
+                    if (elTitle.scrollWidth > elTitle.clientWidth) {
+                        elTitle.classList.add("overflowFade");
+                    } else {
+                        elTitle.classList.remove("overflowFade");
+                    }
+                });
+            }, POPUP_RESIZE_ESTIMATED_TIME);
         });
     };
 

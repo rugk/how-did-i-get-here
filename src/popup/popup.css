@@ -23,7 +23,7 @@ li {
 }
 
 /* common styling for tab list and header */
-header, .listContent {
+header, .tabContent {
   display: flex;
   align-items: center;
 }
@@ -49,7 +49,7 @@ header {
   padding: 8px;
 
   border: 2px solid;
-  border-image: repeating-linear-gradient(to left, rgb(189, 235, 8), rgb(207, 235, 8) 10px, rgb(189, 235, 8)) 1;
+  border-image: repeating-linear-gradient(to right, rgb(189, 235, 8), rgb(207, 235, 8) 10px, rgb(189, 235, 8)) 1;
   border-image-width: 0 0 2px 0;
 }
 h1 {
@@ -71,7 +71,7 @@ main {
 }
 
 /* tab list entry style */
-.listContent {
+.tabContent {
   /* padding for hover */
   padding: 4px;
 
@@ -79,16 +79,32 @@ main {
 
   cursor: pointer;
 }
-.listContent:hover {
+.tabContent:hover {
   background-color: var(--hover-grey);
   text-decoration: underline;
 
   color: rgb(33, 41, 0);
 }
-.listContent:hover img {
+.tabContent:hover img {
   /* change color of image to green */
   /* thx https://stackoverflow.com/questions/27999597/css-filter-to-make-elements-one-color#39392662 */
   filter: grayscale(100%) sepia(100%) hue-rotate(50deg);
+}
+
+.tabContent::before {
+  display: inline-block;
+
+  /* fixed size */
+  background-size: 16px 16px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+
+  content: "";
+  margin: 4px;
+
+  background-image: url('img/parentitem.svg');
 }
 
 .hiddenTab {

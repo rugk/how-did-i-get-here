@@ -10,6 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## [Mozilla Photon icons](https://design.firefox.com/icons/viewer/)
 
 * [`src/popup/img/back.svg`](src/popup/img/back.svg) by Mozilla, license: [MPL v2.0](https://www.mozilla.org/en-US/MPL/2.0/)
+* [`src/popup/img/parentitem.svg`](src/popup/img/subitem.svg) by Mozilla, license: [MPL v2.0](https://www.mozilla.org/en-US/MPL/2.0/), derived from [subitem.svg](https://design.firefox.com/icons/viewer/#subitem)
 
 The MPLv2.0 license is reproduced below:
 

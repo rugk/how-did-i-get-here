@@ -3,6 +3,44 @@
 const TabHistory = (function () {
     const me = {};
 
+    const faviconCache = new Map();
+
+    /**
+     * Searches through the favicon cache and returns it if one could be found.
+     *
+     * Returns an empty string in case of falure.
+     *
+     * @name   TabHistory.searchCacheForIcon
+     * @function
+     * @private
+     * @param {Object} tab
+     * @returns {string}
+     */
+    function searchCacheForIcon(tab) {
+        const tabUrl = new URL(tab.url);
+        if (faviconCache.has(tabUrl.host)) {
+            return faviconCache.get(tabUrl.host);
+        }
+
+        return "";
+    }
+
+    /**
+     * Saves the tab data in cache in case, it needs to be found later.
+     *
+     * @name   TabHistory.saveTabInCache
+     * @function
+     * @private
+     * @param {Object} tab
+     * @returns {void}
+     */
+    function saveTabInCache(tab) {
+        const tabUrl = new URL(tab.url);
+        if (!faviconCache.has(tabUrl.host)) {
+            faviconCache.set(tabUrl.host, tab.favIconUrl);
+        }
+    }
+
     /**
      * Returns the historic parent of a tab.
      *
@@ -19,7 +57,15 @@ const TabHistory = (function () {
             });
         }
 
-        return await browser.tabs.get(tab.openerTabId);
+        const parentTab = await browser.tabs.get(tab.openerTabId);
+
+        if (!parentTab.favIconUrl) {
+            parentTab.favIconUrl = searchCacheForIcon(parentTab);
+        } else {
+            saveTabInCache(parentTab);
+        }
+
+        return parentTab;
     };
 
     /**
@@ -30,8 +76,11 @@ const TabHistory = (function () {
      * @returns {Object}
      */
     me.getCurrentTab = async function() {
-        const currentTab = await browser.tabs.query({currentWindow: true, active: true});
-        return currentTab[0];
+        const currentTabs = await browser.tabs.query({currentWindow: true, active: true});
+        const currentTab = currentTabs[0];
+
+        saveTabInCache(currentTab);
+        return currentTab;
     };
 
     return me;
@@ -71,7 +120,7 @@ const UserInterface = (function () {
             elTab.removeAttribute("id");
 
             // attach event listener
-            elTab.getElementsByClassName("listContent")[0].addEventListener("click", tabClick);
+            elTab.getElementsByClassName("tabContent")[0].addEventListener("click", tabClick);
         }
 
         setTabProperties(tab, elTab);

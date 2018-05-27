@@ -89,7 +89,7 @@ const TabHistory = (function () {
 const UserInterface = (function () {
     const me = {};
 
-    const POPUP_RESIZE_ESTIMATED_TIME = 10; // ms
+    const POPUP_RESIZE_ESTIMATED_TIME = 15; // ms
 
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");

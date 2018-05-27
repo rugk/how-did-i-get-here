@@ -122,3 +122,6 @@ If it is not possible or desirable to put the notice in a particular file, then 
 You may add additional accurate notices of copyright ownership.
 
 Exhibit B - “Incompatible With Secondary Licenses” Notice This Source Code Form is “Incompatible With Secondary Licenses”, as defined by the Mozilla Public License, v. 2.0.
+
+## Special thanks
+* to [SVGO](https://jakearchibald.github.io/svgomg/) for their SVG minimisation tool

@@ -6,7 +6,13 @@
 h1, h2 {
   margin: unset;
 
-  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.overflowFade {
+  background-image: linear-gradient(to right, rgb(0, 0, 0) 90%, rgba(0, 0, 0, 0));
+  color: transparent;
+  background-clip: text;
 }
 ul {
   margin: 0px;

@@ -268,7 +268,8 @@ const UserInterface = (function () {
      * @returns {void}
      */
     function setTabProperties(tab, elGroup) {
-        elGroup.getElementsByClassName("title")[0].textContent = tab.title;
+        const elTitle = elGroup.getElementsByClassName("title")[0];
+        elTitle.textContent = tab.title;
 
         // save ID of tab
         elGroup.dataset.tabId = tab.id;
@@ -340,6 +341,15 @@ const UserInterface = (function () {
                 elNoElementFound.textContent = browser.i18n.getMessage("noHistoryFound");
                 elNoElementFound.classList.remove("invisible");
             }
+
+            // find very long tab titles and add fade effect to them
+            document.querySelectorAll(".title").forEach((elTitle) => {
+                if (elTitle.scrollWidth > elTitle.clientWidth) {
+                    elTitle.classList.add("overflowFade");
+                } else {
+                    elTitle.classList.remove("overflowFade");
+                }
+            });
         });
     };
 

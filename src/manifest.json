@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
+  "short_name": "__MSG_extensionNameShort__",
   "version": "0.1",
   "author": "rugk",
 
@@ -9,11 +10,23 @@
 
   "browser_action": {
     "browser_style": true,
+    "default_icon": "icons/icon-dark.svg",
     "default_title": "__MSG_browserActionButtonTitle__",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup/popup.html",
+    "theme_icons": [
+      {
+        "dark": "icons/icon-dark.svg",
+        "light": "icons/icon-light.svg",
+        "size": 32
+      }
+    ]
   },
 
   "content_security_policy": "default-src 'self'; img-src *",
+  "icons": {
+    "48": "icons/icon-large.svg",
+    "96": "icons/icon-large.svg"
+  },
   "default_locale": "en",
 
   "permissions": [

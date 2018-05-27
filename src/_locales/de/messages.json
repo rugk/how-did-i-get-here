@@ -4,6 +4,10 @@
     "message": "How did I get here? (Tab History)",
     "description": "Name of the extension."
   },
+  "extensionNameShort": {
+    "message": "How did I get here?",
+    "description": "Name of the extension."
+  },
   "extensionDescription": {
     "message": "Wenn du in den Tabs verloren gehst, lässt es dich den Weg anzeigen, der zu deinem aktiven Tab geführt hat.",
     "description": "Description of the extension."

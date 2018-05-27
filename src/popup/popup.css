@@ -62,11 +62,13 @@ main {
   padding: 8px;
 }
 
-/* tab list style */
+/* intendation */
 .tabelement {
-  /* intendation */
   margin-left: 8px;
+}
 
+/* tab list entry style */
+.listContent {
   /* padding for hover */
   padding: 4px;
 
@@ -74,13 +76,13 @@ main {
 
   cursor: pointer;
 }
-.tabelement:hover {
+.listContent:hover {
   background-color: var(--hover-grey);
   text-decoration: underline;
 
   color: rgb(33, 41, 0);
 }
-.tabelement:hover img {
+.listContent:hover img {
   /* change color of image to green */
   /* thx https://stackoverflow.com/questions/27999597/css-filter-to-make-elements-one-color#39392662 */
   filter: grayscale(100%) sepia(100%) hue-rotate(50deg);

@@ -71,7 +71,7 @@ const UserInterface = (function () {
             elTab.removeAttribute("id");
 
             // attach event listener
-            elTab.addEventListener("click", tabClick);
+            elTab.getElementsByClassName("listContent")[0].addEventListener("click", tabClick);
         }
 
         setTabProperties(tab, elTab);
@@ -83,10 +83,6 @@ const UserInterface = (function () {
             elLastHistory = elLastHistory.appendChild(elTab);
         } else {
             elLastHistory = elTab;
-
-            // mark tab as new, if needed
-            delete elTab.dataset.outdated;
-            elTab.classList.remove("notHistory");
         }
 
         // get next parent tab
@@ -131,6 +127,7 @@ const UserInterface = (function () {
             }
         ).then(() => {
             // "reload" whole UI
+            me.destroyTabList();
             Controller.run();
         });
     }
@@ -145,7 +142,7 @@ const UserInterface = (function () {
      * @returns {void}
      */
     function tabClick(event) {
-        const elTab = event.currentTarget;
+        const elTab = event.currentTarget.parentElement;
 
         switchToTab(null, elTab).then(() => {
             // if it is the initial tab, show back button
@@ -170,16 +167,16 @@ const UserInterface = (function () {
      * @returns {void}
      */
     async function goBack() {
+        // if we only navigate one thing back now, hide back button, because we don't need it anymore
+        if (tabSwitches.length <= 2) {
+            elBackButton.classList.add("invisible");
+        }
+
         // remove current tab from stack
         tabSwitches.pop();
 
         // navigate to tab before (also popped, as it adds itself later anyway back)
         await switchToTab(tabSwitches.pop());
-
-        // if it is the initial tab, hide back button, because we don't need it anymore
-        if (tabSwitches.length <= 2) {
-            elBackButton.classList.add("invisible");
-        }
     }
 
     /**
@@ -228,11 +225,6 @@ const UserInterface = (function () {
         historyCount = 0;
         elLastHistory = document.getElementById("tabhistory");
 
-        // mark old elements as outdated
-        for (const elTab of document.querySelectorAll("#tabhistory .tabelement")) {
-            elTab.dataset.outdated = 1;
-        }
-
         elNoElementFound.classList.add("invisible");
     };
 
@@ -244,7 +236,7 @@ const UserInterface = (function () {
      * @returns {void}
      */
     me.destroyTabList = function() {
-        const elementChild = elLastHistory.firstElementChild;
+        const elementChild = document.getElementById("tabhistory").firstElementChild;
         if (elLastHistory.firstElementChild) {
             elementChild.remove();
         }
@@ -269,11 +261,6 @@ const UserInterface = (function () {
             if (historyCount === 0) {
                 elNoElementFound.textContent = browser.i18n.getMessage("noHistoryFound");
                 elNoElementFound.classList.remove("invisible");
-            }
-
-            // hide outdated elements as not belonging to current tab
-            for (const elOutdatedTab of document.querySelectorAll(".tabelement[data-outdated='1']")) {
-                elOutdatedTab.remove();
             }
         });
     };

@@ -90,6 +90,33 @@ const UserInterface = (function () {
     }
 
     /**
+     * Update the sizes of popup and other elements to keep them consistent.
+     *
+     *  Even when the content changes, this ensures the popup is not constantly resized.
+     *
+     * @name   UserInterface.updateStaticSizes
+     * @function
+     * @private
+     * @returns {void}
+     */
+    function updateStaticSizes() {
+        // save old size as minimum popup size if needed
+        if (!document.body.minHeight || document.body.clientHeight > parseInt(document.body.style.minHeight)) {
+            document.body.style.minHeight = `${document.body.clientHeight}px`;
+        }
+        if (!document.body.minWidth || document.body.clientWidth > parseInt(document.body.style.minWidth)) {
+            document.body.style.minWidth = `${document.body.clientWidth}px`;
+        }
+
+        document.querySelectorAll(".longInfoText").forEach((elLongInfo) => {
+            // set size of long texts to static current size, so they don't increase the popup if shown later
+            if (!elLongInfo.style.maxWidth || elLongInfo.style.clientWidth > parseInt(document.body.style.maxWidth) ) {
+                elLongInfo.style.maxWidth = `${document.body.clientWidth}px`;
+            }
+        });
+    }
+
+    /**
      * Go back to last item.
      *
      * You only have to pass one parameter of the two.
@@ -109,6 +136,8 @@ const UserInterface = (function () {
         } else {
             throw new Error("at least one parameter must be specified");
         }
+
+        updateStaticSizes();
 
         if (elTab) {
             const windowId = Number(elTab.dataset.windowId);

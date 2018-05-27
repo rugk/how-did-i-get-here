@@ -19,7 +19,7 @@ li {
 }
 
 .invisible {
-  display: none;
+  display: none !important;
 }
 
 /* common styling for tab list and header */
@@ -60,6 +60,9 @@ h1 {
 /* actual body/content */
 main {
   padding: 8px;
+}
+.longInfoText {
+  display: block;
 }
 
 /* intendation */

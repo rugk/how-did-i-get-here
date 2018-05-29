@@ -5,7 +5,7 @@
 Shows you the history of your current tab. Which tab did you use to open this tab? Don't remember? This is your add-on… :smile:
 
 [Idea by](https://mstdn.io/@jomo/100080000369608251) [@jomo](https://mstdn.io/@jomo).
-Also inspired by [KeepPerentTabHistory](https://github.com/theborg3of5/KeepParentTabHistory) by [@theborg3of5](https://github.com/theborg3of5).
+Also inspired by [KeepParentTabHistory](https://github.com/theborg3of5/KeepParentTabHistory) by [@theborg3of5](https://github.com/theborg3of5).
 
 ## Download
 

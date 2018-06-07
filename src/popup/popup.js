@@ -89,6 +89,8 @@ const TabHistory = (function () {
 const UserInterface = (function () {
     const me = {};
 
+    const OVERFLOW_FADE_TIMEOUT = 100; // ms
+
     const elCurrentTab = document.getElementById("currentTab");
     const elTabTemplate = document.getElementById("tabtemplate");
     const elBackButton = document.getElementById("backButton");
@@ -343,14 +345,16 @@ const UserInterface = (function () {
             }
 
             // find very long tab titles and add fade effect to them
-            document.querySelectorAll(".title").forEach((elTitle) => {
-                if (elTitle.scrollWidth > elTitle.clientWidth &&
-                    elTitle.scrollWidth > document.body.clientWidth) {
-                    elTitle.classList.add("overflowFade");
-                } else {
-                    elTitle.classList.remove("overflowFade");
-                }
-            });
+            setTimeout(() => {
+                document.querySelectorAll(".title").forEach((elTitle) => {
+                    if (elTitle.scrollWidth > elTitle.clientWidth &&
+                        elTitle.scrollWidth > document.body.clientWidth) {
+                        elTitle.classList.add("overflowFade");
+                    } else {
+                        elTitle.classList.remove("overflowFade");
+                    }
+                });
+            }, OVERFLOW_FADE_TIMEOUT);
         });
     };
 

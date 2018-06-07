@@ -29,8 +29,13 @@
   },
   "default_locale": "en",
 
+  "background": {
+    "scripts": ["background.js"]
+  },
+
   "permissions": [
-    "tabs"
+    "tabs",
+    "sessions"
   ],
 
   "applications": {

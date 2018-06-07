@@ -7,11 +7,21 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+## Third-party code
+
+Some code parts are taken from [mdn/webextensions-examples](https://github.com/mdn/webextensions-examples). They are marked in the source as such.
+
+The Mozilla Public License 2.0 (MPL v2.0) is reproduced further below.
+
 ## [Mozilla Photon icons](https://design.firefox.com/icons/viewer/)
 
 * the icon [`assets/TabHistory.svg`](assets/TabHistory.svg) is based on [tab.svg](https://design.firefox.com/icons/viewer/#tab) and [history.svg](https://design.firefox.com/icons/viewer/#history); both by Mozilla, license: [MPL v2.0](https://www.mozilla.org/en-US/MPL/2.0/)
 * [`src/popup/img/back.svg`](src/popup/img/back.svg) by Mozilla, license: [MPL v2.0](https://www.mozilla.org/en-US/MPL/2.0/)
 * [`src/popup/img/parentitem.svg`](src/popup/img/subitem.svg) by Mozilla, license: [MPL v2.0](https://www.mozilla.org/en-US/MPL/2.0/), derived from [subitem.svg](https://design.firefox.com/icons/viewer/#subitem)
+
+The Mozilla Public License 2.0 (MPL v2.0) is reproduced further below.
+
+## MPL 2.0
 
 The MPLv2.0 license is reproduced below:
 

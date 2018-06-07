@@ -3,6 +3,8 @@
 const TabHistory = (function () {
     const me = {};
 
+    const COMMUNICATION_GET_TAB_DATA = "getTabData";
+
     const faviconCache = new Map();
 
     /**
@@ -44,28 +46,90 @@ const TabHistory = (function () {
     /**
      * Returns the historic parent of a tab.
      *
+     * Returns [currentTabValues, historicTabValues]. The historic state of the
+     * tab is the one, which is saved when the tab has been opened.
+     * Note that the historic tab only saves a limited amount of data of the
+     *  original tab URI.
+     * The currentTab may also not be availble, if the user already closed the tab.
+     * In this case, only the historic values are available.
+     * If the extension is newly installed, it _may_ also happen, that the historic
+     * tab is not yet available.
+     * (@TODO fix this!)
+     *
+     * In case a tab could not be found, an empty object is returned.
+     *
      * @name   TabHistory.getParentOfTab
      * @generator
      * @function
-     * @param {Tab} tab
+     * @param {Tab} tab the current tab
+     * @param {Tab} tabOld the current historic tab
      * @returns {Promise}
+     * @throws {Error} if no more parents could be found
      */
-    me.getParentOfTab = async function(tab) {
-        if (!tab.openerTabId) {
+    me.getParentOfTab = async function(tab, tabOld = {}) {
+        let parentTab = {};
+        let historicParentTab = {};
+
+        // try to find historic parent tab if current tab exists
+        if (tab.id) {
+            // simply query tab data for existing tabs
+            historicParentTab = await browser.sessions.getTabValue(tab.id, "parentTab").catch(() => {
+                return {};
+            });
+        }
+
+        // if the current tab does not exist, we have to use the background cache
+        if (!historicParentTab.id && tabOld.openerUniqueTabId) {
+            // try to use tabOld.openerTabId to guess open tab in case it is still open
+            const getExistingParent = browser.tabs.get(tabOld.openerTabId).catch(() => {
+                return {};
+            });
+
+            // try to get value from background cache
+            historicParentTab = await browser.runtime.sendMessage({
+                type: COMMUNICATION_GET_TAB_DATA,
+                uniqueTabId: tabOld.openerUniqueTabId
+            });
+
+            await getExistingParent.then((existingTab) => {
+                // if IDs are the same, we can be sure the tabs are actually
+                // the same and the tab ID was not just randomly reused
+                // Otherwise, we have unfortunately no way of knowing that.
+                if (existingTab.id && historicParentTab.id && historicParentTab.id === existingTab.id) {
+                    parentTab = existingTab;
+                } else {
+                    // TODO: implement fetching from recently closed tabs(?)
+                    // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
+                }
+            });
+        }
+
+        // if no parent could be found, throw exception
+        if (!historicParentTab && !tab.openerTabId) {
             return new Promise((resolve, reject) => {
                 reject(new Error("no more parents found"));
             });
         }
 
-        const parentTab = await browser.tabs.get(tab.openerTabId);
-
-        if (!parentTab.favIconUrl) {
-            parentTab.favIconUrl = searchCacheForIcon(parentTab);
-        } else {
-            saveTabInCache(parentTab);
+        if (historicParentTab) {
+            if (!historicParentTab.favIconUrl) {
+                historicParentTab.favIconUrl = searchCacheForIcon(historicParentTab);
+            } else {
+                saveTabInCache(historicParentTab);
+            }
         }
 
-        return parentTab;
+        if (tab.openerTabId) {
+            parentTab = await browser.tabs.get(tab.openerTabId);
+
+            if (!parentTab.favIconUrl) {
+                parentTab.favIconUrl = searchCacheForIcon(parentTab);
+            } else {
+                saveTabInCache(parentTab);
+            }
+        }
+
+        return [parentTab, historicParentTab];
     };
 
     /**
@@ -106,38 +170,28 @@ const UserInterface = (function () {
      * @name   UserInterface.addHistoryElement
      * @function
      * @private
-     * @param {Object} tab
+     * @param {Array<Object,Object>} tabs
      * @returns {Promise}
      */
-    function addHistoryElement(tab) {
-        // try to get existing element
-        let elTab = document.querySelector(`[data-tab-id='${tab.id}']`);
-        let newlyCreated = false;
+    function addHistoryElement(tabs) {
+        const [currentTab, historicTab] = tabs;
 
         // create new element if needed
-        if (!elTab) {
-            newlyCreated = true;
+        const elTab = elTabTemplate.cloneNode(true);
+        elTab.removeAttribute("id");
 
-            elTab = elTabTemplate.cloneNode(true);
-            elTab.removeAttribute("id");
+        // attach event listener
+        elTab.getElementsByClassName("tabContent")[0].addEventListener("click", tabClick);
 
-            // attach event listener
-            elTab.getElementsByClassName("tabContent")[0].addEventListener("click", tabClick);
-        }
-
-        setTabProperties(tab, elTab);
+        setTabProperties(currentTab, historicTab, elTab);
 
         historyCount++;
 
-        if (newlyCreated) {
-            // save child as one for next tab
-            elLastHistory = elLastHistory.appendChild(elTab);
-        } else {
-            elLastHistory = elTab;
-        }
+        // save child as one for next tab
+        elLastHistory = elLastHistory.appendChild(elTab);
 
         // get next parent tab
-        return TabHistory.getParentOfTab(tab).then(addHistoryElement);
+        return TabHistory.getParentOfTab(currentTab, historicTab).then(addHistoryElement);
     }
 
     /**
@@ -265,32 +319,48 @@ const UserInterface = (function () {
      * @name   UserInterface.setTabProperties
      * @function
      * @private
-     * @param {Object} tab
+     * @param {Object} currentTab
+     * @param {Object} historicTab
      * @param {HtmlElement} elGroup the place where to add the element
      * @returns {void}
      */
-    function setTabProperties(tab, elGroup) {
-        const elTitle = elGroup.getElementsByClassName("title")[0];
-        elTitle.textContent = tab.title;
+    function setTabProperties(currentTab, historicTab, elGroup) {
+        // get single object for values, but prefer one of the values
+        const tabPreferHistoric = Object.assign({}, currentTab, historicTab);
+        const tabPreferActive = Object.assign({}, historicTab, currentTab);
 
+        const elTitle = elGroup.getElementsByClassName("title")[0];
+        elTitle.textContent = tabPreferHistoric.title;
+
+        // if no ID of current tab is available
+        if (!currentTab.id || !currentTab.windowId) {
+            // mark tab as unverified, so it is known it has to be searched or
+            // restored (and the saved ID cannot be trusted)
+            // TODO: implement that this is actually checked when a tab is clicked
+            elGroup.dataset.isUnverifiedTab = true;
+        }
         // save ID of tab
-        elGroup.dataset.tabId = tab.id;
-        elGroup.dataset.windowId = tab.windowId;
+        elGroup.dataset.tabId = tabPreferActive.id;
+        elGroup.dataset.windowId = tabPreferActive.windowId;
+
+        // special handling if historic tab and current tab differ
+        if (historicTab.url !== currentTab.url) {
+            // mark it as requiring navigation back
+            elGroup.classList.add("navigateBackTab");
+        }
 
         const elFavicon = elGroup.querySelector("img");
-        if (tab.favIconUrl) {
-            elFavicon.setAttribute("src", tab.favIconUrl);
-        } else {
-            elFavicon.classList.add("invisible");
+        if (tabPreferHistoric.favIconUrl) {
+            elFavicon.setAttribute("src", tabPreferHistoric.favIconUrl);
         }
 
-        if (tab.hidden) {
+        if (tabPreferActive.hidden) {
             elGroup.classList.add("hiddenTab");
         }
-        if (tab.pinned) {
+        if (tabPreferActive.pinned) {
             elGroup.classList.add("pinnedTab");
         }
-        if (tab.incognito) {
+        if (tabPreferActive.incognito) {
             elGroup.classList.add("privateTab");
         }
     }
@@ -332,12 +402,18 @@ const UserInterface = (function () {
      */
     me.buildUi = async function() {
         const currentTab = await TabHistory.getCurrentTab();
-        setTabProperties(currentTab, elCurrentTab);
+        // always use current value for this tab
+        setTabProperties(currentTab, currentTab, elCurrentTab);
 
         // push tab to history "stack", so we can navigate back to it later
         tabSwitches.push(currentTab.id);
 
-        TabHistory.getParentOfTab(currentTab).then(addHistoryElement).catch(() => {
+        TabHistory.getParentOfTab(currentTab).then(addHistoryElement).catch((error) => {
+            // ignore expected failure
+            if (error.message !== "no more parents found") {
+                console.error(error); // eslint-disable-line no-console
+            }
+
             // at the end a failure is triggered, because it cannot find more parents
             if (historyCount === 0) {
                 elNoElementFound.textContent = browser.i18n.getMessage("noHistoryFound");

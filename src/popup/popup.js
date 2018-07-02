@@ -74,12 +74,13 @@ const TabHistory = (function () {
         if (tab.id) {
             // simply query tab data for existing tabs
             historicParentTab = await browser.sessions.getTabValue(tab.id, "parentTab").catch(() => {
-                return {};
+                return undefined; // tab ID does not exist
+                // (also returns undefined by definition if the tab value is not set)
             });
         }
 
         // if the current tab does not exist, we have to use the background cache
-        if (!historicParentTab.id && tabOld.openerUniqueTabId) {
+        if ((!historicParentTab || !historicParentTab.id) && tabOld.openerUniqueTabId) {
             // try to use tabOld.openerTabId to guess open tab in case it is still open
             const getExistingParent = browser.tabs.get(tabOld.openerTabId).catch(() => {
                 return {};

@@ -96,11 +96,8 @@ const TabHistory = (function () {
                 // if IDs are the same, we can be sure the tabs are actually
                 // the same and the tab ID was not just randomly reused
                 // Otherwise, we have unfortunately no way of knowing that.
-                if (existingTab.id && historicParentTab.id && historicParentTab.id === existingTab.id) {
+                if (existingTab.id && historicParentTab !== undefined && historicParentTab.id && historicParentTab.id === existingTab.id) {
                     parentTab = existingTab;
-                } else {
-                    // TODO: implement fetching from recently closed tabs(?)
-                    // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
                 }
             });
         }
@@ -279,6 +276,11 @@ const UserInterface = (function () {
     function tabClick(event) {
         const elTab = event.currentTarget.parentElement;
 
+        if (elTab.dataset.isUnverifiedTab) {
+            console.log("skip opening unverfied tab ID, because it is likely closed");
+            return;
+        }
+
         switchToTab(null, elTab).then(() => {
             // if it is the initial tab, show back button
             if (tabSwitches.length <= 1) {
@@ -337,7 +339,6 @@ const UserInterface = (function () {
         if (!currentTab.id || !currentTab.windowId) {
             // mark tab as unverified, so it is known it has to be searched or
             // restored (and the saved ID cannot be trusted)
-            // TODO: implement that this is actually checked when a tab is clicked
             elGroup.dataset.isUnverifiedTab = true;
         }
         // save ID of tab

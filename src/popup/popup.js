@@ -1,5 +1,88 @@
 "use strict";
 
+const LastClosedTabs = (function () {
+    const me = {};
+
+    let gettingRecentlyClosed = null;
+    let tabIdMap = null;
+
+    /**
+     * Return the recently closed data by the browser.
+     *
+     * @name   LastClosedTabs.getRecentlyClosed
+     * @function
+     * @private
+     * @returns {Promise}
+     */
+    function getRecentlyClosed() {
+        if (gettingRecentlyClosed === null) {
+            gettingRecentlyClosed = browser.sessions.getRecentlyClosed();
+        }
+
+        return gettingRecentlyClosed;
+    }
+
+    /**
+     * Return the recently closed tabs grouped by ID.
+     *
+     * @name   LastClosedTabs.getTabIdMap
+     * @function
+     * @private
+     * @returns {Promise}
+     */
+    async function getTabIdMap() {
+        // create map, if needed
+        if (tabIdMap === null) {
+            // fill map with elements
+            tabIdMap = new Map();
+            const recentlyClosed = await getRecentlyClosed();
+
+            recentlyClosed.forEach((session) => {
+                if (session.tab === undefined) {
+                    return;
+                }
+
+                tabIdMap.set(session.tab.id, session);
+            });
+        }
+
+        return tabIdMap;
+    }
+
+    /**
+     * Returns the whole history of the tab.
+     *
+     * @name   LastClosedTabs.getTabSessionById
+     * @function
+     * @param {int} tabId
+     * @returns {Promise} (Session variable)
+     */
+    me.getTabSessionById = async function(tabId) {
+        const tabMap = await getTabIdMap();
+
+        if (!tabMap.has(tabId)) {
+            throw new Error("Tab ID not in list of recently closed tabs.");
+        }
+
+        return tabMap.get(tabId);
+    };
+
+    /**
+     * Restores the specified tab by it's session object.
+     *
+     * @name   LastClosedTabs.restoreTab
+     * @function
+     * @param {Object} tabSession
+     * @returns {Promise}
+     */
+    me.restoreTab = function(tabSession) {
+        return browser.sessions.restore(tabSession.tab.sessionId);
+    };
+
+    return me;
+})();
+
+
 const TabHistory = (function () {
     const me = {};
 
@@ -50,7 +133,7 @@ const TabHistory = (function () {
      * tab is the one, which is saved when the tab has been opened.
      * Note that the historic tab only saves a limited amount of data of the
      *  original tab URI.
-     * The currentTab may also not be availble, if the user already closed the tab.
+     * The currentTab may also not be available, if the user already closed the tab.
      * In this case, only the historic values are available.
      * If the extension is newly installed, it _may_ also happen, that the historic
      * tab is not yet available.
@@ -93,14 +176,15 @@ const TabHistory = (function () {
             });
 
             await getExistingParent.then((existingTab) => {
+                if (!historicParentTab.id) {
+                    return;
+                }
+
                 // if IDs are the same, we can be sure the tabs are actually
                 // the same and the tab ID was not just randomly reused
                 // Otherwise, we have unfortunately no way of knowing that.
-                if (existingTab.id && historicParentTab.id && historicParentTab.id === existingTab.id) {
+                if (existingTab.id && historicParentTab.id === existingTab.id) {
                     parentTab = existingTab;
-                } else {
-                    // TODO: implement fetching from recently closed tabs(?)
-                    // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
                 }
             });
         }
@@ -223,11 +307,11 @@ const UserInterface = (function () {
     }
 
     /**
-     * Go back to last item.
+     * Switches to a specific tab by it's ID and/or HtmlElement of the UI.
      *
      * You only have to pass one parameter of the two.
      *
-     * @name   UserInterface.goBack
+     * @name   UserInterface.switchToTab
      * @function
      * @private
      * @param {integer} tabId
@@ -278,6 +362,19 @@ const UserInterface = (function () {
      */
     function tabClick(event) {
         const elTab = event.currentTarget.parentElement;
+
+        if (elTab.dataset.isUnverifiedTab) {
+            const tabId = Number(elTab.dataset.tabId);
+
+            // try restore the likely closed tab
+            LastClosedTabs.getTabSessionById(tabId).then((session) => {
+                LastClosedTabs.restoreTab(session);
+            }).catch(() => {
+                console.log("clicked on (likely) not existant tab, ignore event");
+            });
+
+            return;
+        }
 
         switchToTab(null, elTab).then(() => {
             // if it is the initial tab, show back button
@@ -337,7 +434,6 @@ const UserInterface = (function () {
         if (!currentTab.id || !currentTab.windowId) {
             // mark tab as unverified, so it is known it has to be searched or
             // restored (and the saved ID cannot be trusted)
-            // TODO: implement that this is actually checked when a tab is clicked
             elGroup.dataset.isUnverifiedTab = true;
         }
         // save ID of tab

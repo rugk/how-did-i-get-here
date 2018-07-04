@@ -93,19 +93,24 @@ main {
   padding: 4px;
 
   border-radius: 4px;
-
-  cursor: pointer;
 }
 .tabContent:hover {
   background-color: var(--hover-grey);
-  text-decoration: underline;
-
-  color: rgb(33, 41, 0);
 }
 .tabContent:hover img {
   /* change color of image to green */
   /* thx https://stackoverflow.com/questions/27999597/css-filter-to-make-elements-one-color#39392662 */
   filter: grayscale(100%) sepia(100%) hue-rotate(50deg);
+}
+
+/* link effect */
+:not(.unverifiedTab) > .tabContent {
+  cursor: pointer;
+}
+:not(.unverifiedTab) > .tabContent:hover {
+  text-decoration: underline;
+
+  color: rgb(33, 41, 0);
 }
 
 .tabContent::before {

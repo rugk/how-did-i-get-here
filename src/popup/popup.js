@@ -276,8 +276,8 @@ const UserInterface = (function () {
     function tabClick(event) {
         const elTab = event.currentTarget.parentElement;
 
-        if (elTab.dataset.isUnverifiedTab) {
-            console.log("skip opening unverfied tab ID, because it is likely closed");
+        if (elTab.classList.contains("unverifiedTab")) {
+            console.log("skip opening unverfied tab ID, because it is likely closed"); // TODO: show real notification
             return;
         }
 
@@ -339,7 +339,7 @@ const UserInterface = (function () {
         if (!currentTab.id || !currentTab.windowId) {
             // mark tab as unverified, so it is known it has to be searched or
             // restored (and the saved ID cannot be trusted)
-            elGroup.dataset.isUnverifiedTab = true;
+            elGroup.classList.add("unverifiedTab");
         }
         // save ID of tab
         elGroup.dataset.tabId = tabPreferActive.id;

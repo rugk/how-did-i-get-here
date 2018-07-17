@@ -96,7 +96,7 @@ const TabHistory = (function () {
                 // if IDs are the same, we can be sure the tabs are actually
                 // the same and the tab ID was not just randomly reused
                 // Otherwise, we have unfortunately no way of knowing that.
-                if (existingTab.id && historicParentTab !== undefined && historicParentTab.id && historicParentTab.id === existingTab.id) {
+                if (existingTab.id && historicParentTab && historicParentTab.id && historicParentTab.id === existingTab.id) {
                     parentTab = existingTab;
                 }
             });
@@ -346,7 +346,7 @@ const UserInterface = (function () {
         elGroup.dataset.windowId = tabPreferActive.windowId;
 
         // special handling if historic tab and current tab differ
-        if (historicTab.url !== currentTab.url) {
+        if (historicTab && historicTab.url !== currentTab.url) {
             // mark it as requiring navigation back
             elGroup.classList.add("navigateBackTab");
         }

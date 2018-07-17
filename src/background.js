@@ -71,9 +71,14 @@ const TabInfoCache = (function () {
         // using extra ID here as tab IDs can be reassigned when tabs are closed
         uniqueTabId++;
         browser.sessions.setTabValue(tab.id, "uniqueId", uniqueTabId);
-        console.log(tab.id, "got:", uniqueTabId)
+        console.log(tab.id, "got:", uniqueTabId);
 
         const currentTabData = await browser.sessions.getTabValue(tab.id, "parentTab");
+
+        // if it is a new tab and has no opener ID, there is nothing to save
+        if (!tab.openerTabId) {
+            return;
+        }
 
         if (!currentTabData) {
             const parentTab = await browser.tabs.get(tab.openerTabId);

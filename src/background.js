@@ -102,6 +102,13 @@ const TabInfoCache = (function () {
     me.init = function() {
         browser.runtime.onMessage.addListener(messageGetHistory);
         browser.tabs.onCreated.addListener(saveParentInfo);
+
+        // save data of all tabs at startup
+        browser.tabs.query({}).then((tabs) => {
+            for (const tab of tabs) {
+                saveParentInfo(tab);
+            }
+        });
     };
 
     return me;

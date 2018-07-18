@@ -188,6 +188,13 @@ const TabInfoCache = (function () {
         // set data storage
         tabValueCache = new SessionStorage();
         // tabValueCache = new Map();
+
+        // save data of all tabs at startup
+        browser.tabs.query({}).then((tabs) => {
+            for (const tab of tabs) {
+                saveParentInfo(tab);
+            }
+        });
     };
 
     return me;

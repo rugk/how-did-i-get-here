@@ -30,7 +30,7 @@
   "default_locale": "en",
 
   "background": {
-    "scripts": ["background.js"]
+    "page": "background/background.html"
   },
 
   "permissions": [
@@ -41,7 +41,7 @@
   "applications": {
     "gecko": {
       "id": "how-did-i-get-here@rugk.github.io",
-      "strict_min_version": "57.0"
+      "strict_min_version": "60.0"
     }
   }
 }

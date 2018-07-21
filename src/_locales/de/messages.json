@@ -17,6 +17,7 @@
     "description": "The title for the button, which opens the popup."
   },
 
+  // popup
   "noHistoryFound": {
     "message": "Keine Chronik gefunden. Vielleicht ist dies ein neuer Tab, den du gerade geöffnet hast?",
     "description": "The text shown, when no history could be found."

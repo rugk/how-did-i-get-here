@@ -49,7 +49,7 @@ Apart from that, there are some simple rules.
 
 #### JS
 * Use EcmaScript 2017. (so e.g. `await`/`async` are fine) Basically everything, which is supported by Firefox >= 57 can also be used.
-* We use [ESLint](https://eslint.org/). Please do use it to lint your files. It specifies all coding guidelines.
+* We use [ESLint](https://eslint.org/). Please do use it to lint your files. It specifies all coding guidelines. If you use NodeJs, you can just run `npm install` to install it.
   When something is not specified just use common sense and look at how other code in the project is written.
 * Especially, as we use a [CSP](src/manifest.json), please do _not_:
    * use inline JavaScript

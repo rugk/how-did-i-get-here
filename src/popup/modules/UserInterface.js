@@ -75,7 +75,7 @@ function updateStaticSizes() {
  * @function
  * @private
  * @param {integer} tabId
- * @param {HtmlElement} elTab
+ * @param {HTMLElement} elTab
  * @returns {Promise}
  */
 function switchToTab(tabId, elTab) {
@@ -168,7 +168,7 @@ async function goBack() {
  * @private
  * @param {Object} currentTab
  * @param {Object} historicTab
- * @param {HtmlElement} elGroup the place where to add the element
+ * @param {HTMLElement} elGroup the place where to add the element
  * @returns {void}
  */
 function setTabProperties(currentTab, historicTab, elGroup) {

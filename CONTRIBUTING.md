@@ -1,73 +1,63 @@
-Nice to see you want to contribute! :+1:
+Nice to see you want to contribute to this project! :+1: :tada:
+Please have a look at this guide to know what you are changing.
+
+As I do not want to duplicate the instructions all over, please **find the common contributors docs here**: https://github.com/TinyWebEx/common/blob/master/CONTRIBUTING.md
+
+Some links and potential special rules for this repo only are listed below.
+
+## Support us!
+
+You like this add-on, but have no idea how to support us?
+
+Here are some easy things you can always do:
+
+* Spread the word and recommend it to others! 🤗😍
+* Leave a rating [at addons.mozilla.org](https://addons.mozilla.org/firefox/addon/how-did-i-get-here/reviews/) if you like it!
+  Also consider writing some text and not only leaving stars there. It's always nice to hear some warm words. ☺️
+* Star this project [on GitHub](https://github.com/rugk/how-did-i-get-here) by clicking the "star" icon!
 
 ## Translations
 
-It would be great, if you can contribute your translations! Currently, it is unfortunately only possible to translate the JSON files directly.
-To do so, go to [`src/_locales/en`](src/_locales/en) and copy the English (or German) [`messages.json`](src/_locales/en/messages.json) file. (You could also use another source language if you want, but usually English is the best.) Create a new dir at [`src/_locales`](src/_locales) with the abbreviation of the language you want to translate.
+It would be great if you can contribute your translations! You can either translate the JSON files directly or use [this online translator service](https://lusito.github.io/web-ext-translator/?gh=https://github.com/rugk/how-did-i-get-here).
 
-At the end, just submit a Pull Request.
+**Manually:** To translate it manually, go to [`src/_locales/en`](src/_locales/en) and copy the English (or any other existing language) `messages.json` file. (You could also use another source language if you want, but usually English is the best.) Create a new dir at `src/_locales` with the abbreviation of the language you want to translate.  
+**Web-ext-translator:** Go to [this page](https://lusito.github.io/web-ext-translator/) and translate it online. Download the result by clicking on "Export to ZIP" at the bottom.
+
+At the end, just submit a Pull Request with your changed files.
 Of course, you can (and should) improve existing translations.
 
 For more details, [see the official docs](https://developer.mozilla.org/Add-ons/WebExtensions/Internationalization#Providing_localized_strings_in__locales).
 
-### Translation style
+### Other items to translate
 
-The English "you" should be translated in a personal way, if the target language differentiates between "you" for "anybody"/"they" and "you" for "the user of this extension". In German, that e.g. means you can translate it with "du [kannst etwas machen]" instead of "man [kann etwas machen]".
+* Text assets to translate: [`assets/texts`](assets/texts)
+* Screenshots: [`assets/screenshots`](assets/screenshots)
+* Wiki to translate: [wiki](/wiki)
+* Sidebar file for adding language: [`_Sidebar` file](/wiki/_Sidebar/_edit)
 
-Please pay attention to the context and UI area the message is used for. Better translate it to a good native statement than a literal translation.
-For example messages like "Learn more" may need special (and different) handling and could also be translated with "More information" or so. Generally in the tips you should be a concise as possible. All other texts – like helper texts in the options page – should also be concise, but on point and factually correct. You may use easy terms to explain a thing and link to more resources instead, however. (See also the "Writing for users" guide linked below, where this is explained in more detail.)
-
-Please have look at [the "Writing for users" guide](https://design.firefox.com/photon/copy/writing-for-users.html) of the Firefox Photon Design for other rules you should adhere to.
-
-### Translations of add-on description
-
-All texts shown on AMO (addons.mozilla.org) are maintained in [`assets/texts`](assets/texts). Again, you can use the English template there.
-The files have different formats, but all of them are easily translatable with any text editor.
-Note that the `amoScreenshots.csv` file refers to the screenshot descriptions you can see when you click on the screenshots of AMO. The first column there is the file name, which you can see in [`assets/screenshots`](assets/screenshots), and _must not_ be translated.
+For more information, see the whole [contributing doc](https://github.com/TinyWebEx/common/blob/master/CONTRIBUTING.md#translations).
 
 ## Coding
 
-### Getting started
+See the **common guide** on how to [start coding](https://github.com/TinyWebEx/common/blob/master/CONTRIBUTING.md#coding) and what rules to follow.
 
-Developing/improving a WebExtension add-on is easy! **If you have ever made some stuff with HTML/CSS/JS you can do that, too!** It's built on the same technologies.
+**Attention:** For this add-on, you need to execute [`scripts/downloadEmojiImages.sh`](scripts/downloadEmojiImages.sh) to download the bundled emoji sheets if you use anything else than the "native emojis" ("emojis from your OS") in the settings of this add-on. The reason is just, that these big files are not bundled/distributed in this repo.
 
-* **Debug extension:** Just visit `about:debugging` and load the extension by selecting any file from the Web Extensions' dir. In our case, e.g. select `manifest.json` from the `src` dir. [See a video here.](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Your_first_WebExtension#Installing).
-* **Change code:** When it is loaded you can just change the code (and press "Reload", if needed) and you'll see the result. That is it!
+### Tests
 
-If you use Visual Studio Code, you can use [the Firefox debugger](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-firefox-debug) to run it. Follow the instructions there, and start it with `F5`.
+* Test dir: [`src/tests/`](src/tests/)
+* EsLint config for tests: [`src/tests/.eslintrc`](src/tests/.eslintrc)
 
-### Coding guidelines
+## Need ideas?
 
-As for simple indentation issues, please refer to the [editorconfig file](.editorconfig). Just use a [plugin](http://editorconfig.org/#download), if needed, for your editor.
+Don't have any idea what to take up? [Here you can find a list of good issues for starters](../../contribute), e.g. if you want to start with this project or a (programming) language in general.
+However, of course, feel free to take on any issue (that is not claimed or assigned to someone else).
 
-Apart from that, there are some simple rules.
+Also, there are other add-on's, which are very similar and may also need work:
 
-### General
-* Do not introduce new unnecessary permissions. The add-on should require as few permissions as possible.
-* Keep the code small. Do not introduce big or unnecessary dependencies. (Better ask before you do.)
-* There is a loose width limit at 80 characters, except for HTML and text/Markdown files. HTML files should always be intended properly. "Loose limit" means I won't care if you add 3-5 characters more, but when the line becomes too long, you better split it on two lines, if it makes sense. Always prefer readability over such an arbitrary limit, however, so e.g. JSDOC can always be split onto the next line, while JS commands sometimes look better on a single line, even though it may be _a bit_ longer.
+* [Awesome Emoji Picker](https://github.com/rugk/how-did-i-get-here/contribute)
+* [Offline QR Code Generator](https://github.com/rugk/offline-qr-code/contribute)
+* [Mastodon Simplified Federation](https://github.com/rugk/mastodon-simplified-federation/contribute)
+* [Dark Mode Website Switcher](https://github.com/rugk/website-dark-mode-switcher/contribute)
 
-#### JS
-* Use EcmaScript 2017. (so e.g. `await`/`async` are fine) Basically everything, which is supported by Firefox >= 57 can also be used.
-* We use [ESLint](https://eslint.org/). Please do use it to lint your files. It specifies all coding guidelines. If you use NodeJs, you can just run `npm install` to install it.
-  When something is not specified just use common sense and look at how other code in the project is written.
-* Especially, as we use a [CSP](src/manifest.json), please do _not_:
-   * use inline JavaScript
-   * use eval, or other insecure features
-   * modify the CSP
-* The code uses a kind of "Revealing Module Pattern", where the variable `me` contains all public methods (and properties).
-* Avoid `this`, it mostly causes confusion. The pattern used here, usually does not need `this`.
-* Use early return instead of nested if blocks to keep the code readable.
-* Use `const` whenever possible (also in local variables in functions), only use `let` when the variable needs to be changed. Don't use `var`.
-* If you write real constants (i.e. `const` variables not written in functions, if their scope e.g. is a "module" or whole project, and which do represent static _literals_, e.g. simple variable types, such as integers, strings, but not selected HTML elements), do write them in UPPERCASE (as "real" constants are usually written in other languages), otherwise write them as usual variables in camelCase.
-* Objects, which should never be modified, should be frozen with `Object.freeze`, so they cannot be modified.
-* Do _not_ use magic numbers. Use (global/module-scoped) constants instead.
-* Throw errors when you have them. Avoid logging things with `console.log()`.
-* Load translations via JS and add the text if needed.
-* Avoid naming variables by their variable type only, e.g. `element`. Instead try to use the same variable name for an element whenever you refer to it in the source code. E.g. name a message box `elMessage`, so one can search for it in the whole code base to find out, where it is touched.
-* You should start the variable names of HTML elements with `el` as they are not obvious to differentiate from other variable names. Otherwise, do not prepend the variable type to the variable name.
-* Avoid anonymous functions, which have no name (i.e. not really assigned ) unless they do really do simple things. In most cases bigger anonymous functions are a point one may refactor. Consider introducing some (private) function in the module instead, so the function is described, documented and maybe re-used.
-
-### CSS
-
-* Remember that [WebExtensions automatically](https://discourse.mozilla.org/t/add-ons-have-box-sizing-border-box-by-default/28359) have the CSS property [`box-sizing`](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing) set to `border-box` instead of `content-box` as on the web.
+There is also [an overview over all good first issues in other add-on repos](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+archived%3Afalse+user%3Arugk+user%3ATinyWebEx+label%3A%22good+first+issue%22). Also [check out the libraries used by this project](https://github.com/TinyWebEx).

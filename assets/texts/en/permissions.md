@@ -10,4 +10,4 @@ For a general explanation of add-on permission see [this support article](https:
 
 ## Feature-specific (optional) permissions
 
-Currently no permissions are requested for specific features.
+Currently, no permission is requested for specific features.
